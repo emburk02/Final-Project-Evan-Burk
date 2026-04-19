@@ -29,6 +29,23 @@ python final_project_solar_compare.py
 python final_project_solar_compare.py --lookback 120 --horizon 60 --epochs 50
 """
 
+# Code map
+# --------
+# 1. Imports
+# 2. Constants
+# 3. Small helpers
+# 4. Data loading / preprocessing
+# 5. Split and window builders
+# 6. Datasets
+# 7. Models
+# 8. Training / evaluation
+# 9. Plot helpers
+# 10. Main
+
+# ============================================================
+# 1. IMPORTS
+# ============================================================
+
 from __future__ import annotations
 
 import argparse
@@ -47,7 +64,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 # ============================================================
-# Constants
+# 2. CONSTANTS
 # ============================================================
 
 TARGET = "PV_Power_W"
@@ -84,7 +101,7 @@ TIME_COLS = ["mod_sin", "mod_cos", "doy_sin", "doy_cos"]
 
 
 # ============================================================
-# Small helpers
+# 3. SMALL HELPERS
 # ============================================================
 
 def set_seed(seed: int) -> None:
@@ -129,7 +146,7 @@ def clamp_power(x: np.ndarray | float, lo: float = 0.0, hi: float | None = None)
 
 
 # ============================================================
-# Log loading / preprocessing
+# 4. DATA LOADING / PREPROCESSING
 # ============================================================
 
 def fix_legacy_weather_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -270,7 +287,7 @@ def prepare_dataframe(logs_dir: Path, max_gap: str) -> tuple[pd.DataFrame, list[
 
 
 # ============================================================
-# Split and window builders
+# 5. SPLIT AND WINDOW BUILDERS
 # ============================================================
 
 def chronological_split(df: pd.DataFrame, train_frac=0.70, val_frac=0.15):
@@ -404,7 +421,7 @@ def build_lstm_windows(df: pd.DataFrame, exog_cols: list[str], lookback: int, ho
 
 
 # ============================================================
-# Datasets
+# 6. DATASETS
 # ============================================================
 
 class FlatDataset(Dataset):
@@ -432,7 +449,7 @@ class SequenceDataset(Dataset):
 
 
 # ============================================================
-# Models
+# 7. MODELS
 # ============================================================
 
 class MLPRegressor(nn.Module):
@@ -483,7 +500,7 @@ class LSTMRegressor(nn.Module):
 
 
 # ============================================================
-# Training / evaluation
+# 8. TRAINING / EVALUATION
 # ============================================================
 
 def fit_standardizer(X_train: np.ndarray):
@@ -703,7 +720,7 @@ def run_supervised_experiment(
 
 
 # ============================================================
-# Plot helpers
+# 9. PLOT HELPERS
 # ============================================================
 
 def plot_training_curves(histories: dict[str, dict], out_path: Path):
@@ -756,7 +773,7 @@ def plot_metric_bars(metrics_df: pd.DataFrame, metric_col: str, out_path: Path, 
 
 
 # ============================================================
-# Main
+# 10. MAIN
 # ============================================================
 
 def main():
@@ -784,7 +801,7 @@ def main():
     print(f"Device: {device}")
 
     # --------------------------------------------------------
-    # Load and preprocess
+    # 10.1 LOAD AND PREPROCESS DATA
     # --------------------------------------------------------
     df_1m, exog_cols = prepare_dataframe(logs_dir=logs_dir, max_gap=args.max_gap)
     train_df, val_df, test_df = chronological_split(df_1m)
@@ -816,7 +833,7 @@ def main():
     pred_table = None
 
     # ========================================================
-    # SECTION 1 - FTDNN
+    # 10.2 SECTION 1 - FTDNN
     # ========================================================
     print("\n" + "=" * 70)
     print("SECTION 1 - FTDNN")
@@ -859,7 +876,7 @@ def main():
     all_histories["ftdnn_nonlinear"] = ftdnn_nonlinear["history"]
 
     # ========================================================
-    # SECTION 2 - NARX
+    # 10.3 SECTION 2 - NARX
     # ========================================================
     print("\n" + "=" * 70)
     print("SECTION 2 - NARX")
@@ -920,7 +937,7 @@ def main():
     all_histories["narx_nonlinear"] = narx_nonlinear["history"]
 
     # ========================================================
-    # SECTION 3 - LSTM
+    # 10.4 SECTION 3 - LSTM
     # ========================================================
     print("\n" + "=" * 70)
     print("SECTION 3 - LSTM")
@@ -947,7 +964,7 @@ def main():
     all_histories["lstm"] = lstm_out["history"]
 
     # --------------------------------------------------------
-    # Combine predictions onto the same test timeline
+    # 10.5 COMBINE PREDICTIONS ONTO THE SAME TEST TIMELINE
     # --------------------------------------------------------
     base_pred = pd.DataFrame({
         "target_time": pd.to_datetime(lstm_test["target_time"]),
@@ -972,7 +989,7 @@ def main():
     pred_table.to_csv(out_dir / "comparison_predictions.csv", index=False)
 
     # --------------------------------------------------------
-    # Metrics table
+    # 10.6 METRICS TABLE
     # --------------------------------------------------------
     metrics_df = pd.DataFrame(all_metrics)
     metrics_df = metrics_df.sort_values("test_mae_W").reset_index(drop=True)
@@ -993,7 +1010,7 @@ def main():
             )
 
     # --------------------------------------------------------
-    # Plots
+    # 10.7 PLOTS
     # --------------------------------------------------------
     plot_training_curves(all_histories, out_dir / "training_curves.png")
     plot_last_k(
