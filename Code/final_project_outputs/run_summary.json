@@ -1,0 +1,31 @@
+{
+  "rows_after_preprocessing": 28173,
+  "train_rows": 19721,
+  "val_rows": 4226,
+  "test_rows": 4226,
+  "feature_cols": [
+    "PV_Voltage_V",
+    "PV_Current_A",
+    "Battery_Voltage_V",
+    "Battery_Current_A",
+    "Battery_Power_W",
+    "Avg_Power_to_Battery_W",
+    "Battery_Temp_C",
+    "Air_Temp_C",
+    "Humidity_pct",
+    "Air_Pressure_inHg",
+    "Wind_Speed_ms",
+    "Wind_Direction_deg",
+    "Solar_Irradiance_Wm2",
+    "UV_Index",
+    "Est_Efficiency",
+    "mod_sin",
+    "mod_cos",
+    "doy_sin",
+    "doy_cos"
+  ],
+  "lookback": 120,
+  "narx_output_lookback": 120,
+  "horizon": 60,
+  "max_gap": "2min"
+}

@@ -1,0 +1,10 @@
+Forecast horizon: +60 minute(s)
+Lookback: 120 minute(s)
+Rows after preprocessing: 28173
+Feature columns: ['PV_Voltage_V', 'PV_Current_A', 'Battery_Voltage_V', 'Battery_Current_A', 'Battery_Power_W', 'Avg_Power_to_Battery_W', 'Battery_Temp_C', 'Air_Temp_C', 'Humidity_pct', 'Air_Pressure_inHg', 'Wind_Speed_ms', 'Wind_Direction_deg', 'Solar_Irradiance_Wm2', 'UV_Index', 'Est_Efficiency', 'mod_sin', 'mod_cos', 'doy_sin', 'doy_cos']
+
+ftdnn_nonlinear    MAE=22.449 W  RMSE=31.218 W  R^2=0.5452  MAE improvement vs persistence=13.003 W
+narx_nonlinear     MAE=23.018 W  RMSE=32.856 W  R^2=0.4962  MAE improvement vs persistence=12.434 W
+lstm               MAE=25.541 W  RMSE=33.380 W  R^2=0.4800  MAE improvement vs persistence=9.911 W
+narx_linear        MAE=28.790 W  RMSE=37.510 W  R^2=0.3434  MAE improvement vs persistence=6.662 W
+ftdnn_linear       MAE=30.547 W  RMSE=39.566 W  R^2=0.2694  MAE improvement vs persistence=4.905 W
